@@ -24,13 +24,14 @@ class DecoderRNN(nn.Module):
         self.embedding = nn.Embedding(output_size, hidden_size)
         self.rnn = nn.RNN(hidden_size, hidden_size)
         self.out = nn.Linear(hidden_size, output_size)
+        self.softmax = nn.LogSoftmax() # dim =1
+
 
     def forward_pass(self,input,hidden):
         decoder_embedding = self.embedding(input)
         activation = F.relu(decoder_embedding)
         output , hidden = self.rnn(activation,hidden)
         output = self.out(output)
+        output = self.softmax(output)
         return output,hidden
     
-    # TODO 
-    # Lttile more to do``

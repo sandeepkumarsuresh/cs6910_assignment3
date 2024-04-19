@@ -1,3 +1,11 @@
 # Ignoring the Dataset Directory
 
 Dataset/
+
+# Ignoring the pycache directory
+
+__pycache__/
+
+# Ignoring the wandb directory
+
+wandb/
