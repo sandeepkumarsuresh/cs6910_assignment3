@@ -8,8 +8,8 @@ class LoadDataset:
     
     
     dataset_path :str
-    input : list
-    output : list
+    # input : list
+    # output : list
 
     
     def load(self):
@@ -71,7 +71,7 @@ class Tokenizer:
         This function is convert to tensor for a single character
         """
         
-        tensor = torch.zeros(1,num_tokens)
+        tensor = torch.zeros(1,num_tokens,dtype=torch.long)
 
         for key,value in token_index_map.items():
             print(value)
@@ -95,7 +95,7 @@ class Tokenizer:
         <n_letters_in_a_word x 1 x num_tokens>
         """
         
-        tensor = torch.zeros(len(word),1,num_tokens)
+        tensor = torch.zeros(len(word),1,num_tokens,dtype=torch.long)
 
         for i , char in enumerate(word):
 
@@ -114,20 +114,20 @@ class Tokenizer:
         return tensor
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-    path_to_dataset = 'Dataset/mal/mal_train.csv'
+#     path_to_dataset = 'Dataset/mal/mal_train.csv'
 
-    x = LoadDataset(path_to_dataset)
-    a,b = x.load()
+#     x = LoadDataset(path_to_dataset)
+#     a,b = x.load()
 
-    y = Tokenizer()
+#     y = Tokenizer()
 
-    c = y.tokenizer(a)
+#     c = y.tokenizer(a)
 
-    d,e = y.token_mapping(c)
+#     d,e = y.token_mapping(c)
 
-    # print(d)
-    # print(e)
+#     # print(d)
+#     # print(e)
 
-    f = y.convert_tensor_word(word='hello',num_tokens=d,token_index_map=e)
+#     f = y.convert_tensor_word(word='hello',num_tokens=d,token_index_map=e)
