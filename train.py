@@ -5,6 +5,21 @@ from Model import *
 
 if __name__ == '__main__':
 
+
+
+
+    # # adjustable parameters
+    # INPUT_DIM = len(source.vocab)
+    # OUTPUT_DIM = len(target.vocab)
+    # ENC_EMB_DIM = 256
+    # DEC_EMB_DIM = 256
+    # HID_DIM = 512
+    # N_LAYERS = 2
+    # ENC_DROPOUT = 0.5
+    # DEC_DROPOUT = 0.5
+
+
+
     path_to_dataset = 'Dataset/mal/mal_train.csv'
 
     x = LoadDataset(path_to_dataset)
@@ -13,7 +28,7 @@ if __name__ == '__main__':
     y = Tokenizer()
 
     c = y.tokenizer(a)
-
+    print(c)
     d,e = y.token_mapping(c)
 
     # print(d)
@@ -27,13 +42,14 @@ if __name__ == '__main__':
     print(f.dtype,'shape',f.shape)
     
     n_hidden = 128
-
-    rnn = EncoderRNN(hidden_size=n_hidden)
+    enc_config = Encoder_Config(hidden_size=256,n_layers=2)
+    rnn = EncoderRNN(enc_config)
     o,h = rnn(f)
 
     print(o.shape)
     print(h.shape)
 
+    # de_config = Decoder_Config(input_size=)
 
     # input = letterToTensor('A')
     # hidden = torch.zeros(1, n_hidden)

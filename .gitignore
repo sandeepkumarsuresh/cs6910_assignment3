@@ -9,3 +9,11 @@ __pycache__/
 # Ignoring the wandb directory
 
 wandb/
+
+
+# Ignoring Toy RNN Examples and Datasets
+
+data/
+data.zip
+toy.py
+
