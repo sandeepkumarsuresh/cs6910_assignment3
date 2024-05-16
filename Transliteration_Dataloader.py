@@ -7,6 +7,10 @@ from torchtext.utils import download_from_url, extract_archive
 import io
 import pandas as pd
 from typing import Set
+from dataclasses import dataclass
+from typing import Any
+
+from torch.utils.data import Dataset, DataLoader
 
 # url_base = 'https://raw.githubusercontent.com/multi30k/dataset/master/data/task1/raw/'
 # train_urls = ('train.de.gz', 'train.en.gz')
@@ -21,46 +25,59 @@ from typing import Set
 # en_tokenizer = get_tokenizer('spacy', language='en')
 
 
-def load(dataset_path):
+@dataclass
+class Transliteration_Dataloader(Dataset):
+    file_path:str
+    source_lang:str
+    target_lang:str
 
-    df = pd.read_csv(dataset_path)
+    source_vocab:Any
+    target_vocab:Any
+
+    target_char_mapping:Any
+
+    def __post_init__(self):
+        self.data_read = pd.read_csv(self.file_path,header = None , names=[self.source_lang,self.target_lang] )
+
+        self.max_source_length = max([len(word) for word in self.data_read[self.source_lang].tolist()]) + 1
+        self.max_target_length = max([len(word) for word in self.data_read[self.target_lang].tolist()]) + 1
+
+    def do_one_hot(self, word, char_to_idx):
+        num_char = len(char_to_idx)
+        max_len = self.max_target_length
+        one_hot = torch.zeros((max_len, num_char))
+        for i, char in enumerate(word):
+            char_idx = char_to_idx.get(char, char_to_idx.get('<unk>'))
+            one_hot[i][char_idx] = 1
+        return one_hot
     
-    input = df.iloc[:,0].to_list()   
-    output = df.iloc[:,1].to_list()
+
+    ## Modifying the __len__ and the __getitem__ method for the dataloader ##
 
 
-    return input ,output
+    def __len__(self):
+        return len(self.data_read)
 
-def word_to_char(self,word):
+    def __getitem__(self, idx):
+        source_data = self.data_read.iloc[idx][self.source_lang]
+        target_data = self.data_read.iloc[idx][self.target_lang]
 
-    characters: Set[str] = set()
-    words_len = []
+        
+        source_vocab_ind = [self.source_vocab.get(char, self.source_vocab.get('<unk>')) for char in source_data]
+        target_vocab_ind = [self.target_vocab.get(char, self.target_vocab.get('<unk>')) for char in target_data]
+        source_vocab_ind.insert(0, 0)  # Assuming start-of-word token index is 0
+        target_vocab_ind.insert(0, 0)  # Assuming start-of-word token index is 0
 
-    for words in word:
-        words_len.append(len(words))
-        for char in words:
-            if char not in characters:
-                characters.add(char)
+        source_vocab_len = len(source_vocab_ind)
+        target_vocab_len = len(target_vocab_ind)
 
-                # print(char)
-    
-    characters = sorted(list(characters))
-    max_word_len = max(words_len)
+        pad_source = [self.source_vocab.get('<pad>')] * (self.max_source_length - source_vocab_len)
+        pad_target = [self.target_vocab.get('<pad>')] * (self.max_target_length - target_vocab_len)
 
-    return characters #, max_word_len
+        source_vocab_ind.extend(pad_source)
+        target_vocab_ind.extend(pad_target)
 
-def build_vocab(filepath, tokenizer):
-    counter = Counter()
-    with io.open(filepath, encoding="utf8") as f:
-        for string_ in f:
-            counter.update(tokenizer(string_))
-    return Vocab(counter, specials=['<unk>', '<pad>', '<bos>', '<eos>'])
+        source_vocab_ind = torch.LongTensor(source_vocab_ind)
+        target_vocab_ind = torch.LongTensor(target_vocab_ind)
 
-
-if __name__ == '__main__':
-
-    examples = ['സ്ഥലമാണ്']
-
-    vocab = build_vocab_from_iterator(examples)
-    print(vocab.get_stoi())
-
+        return source_vocab_ind, target_vocab_ind, source_vocab_len, target_vocab_len
