@@ -3,7 +3,8 @@ from Transliteration_Dataloader import Transliteration_Dataloader
 from Load_batch import Data_Load_Batch
 from Utility_func import *
 from train import Train
-from Model import *
+# from Model import *
+from Model_Attention import *
 # from torch import nn
 from torch import optim
 import torch.nn as nn
@@ -39,22 +40,43 @@ def main(args):
     OPTIMIZER = args.optimizer
     LEARNING_RATE = args.learning_rate
 
+    # encoder = Encoder(input_dim=INPUT_DIMENSION,
+    #                   embedding_size=EMBEDDING_SIZE,
+    #                   hidden_dim=HIDDEN_LAYER,
+    #                   num_layers=NUM_LAYERS,
+    #                   bidirectional=BIDIRECTIONAL,
+    #                   cell_type=CELL,
+    #                   dropout_value=DROPOUT).to(device)
+    
+    # decoder = Decoder(output_dim=OUTPUT_DIMENSION,
+    #                   embedding_size=EMBEDDING_SIZE,
+    #                   hidden_dim=HIDDEN_LAYER,
+    #                   num_layers=NUM_LAYERS,
+    #                   bidirectional=BIDIRECTIONAL,
+    #                   cell_type=CELL,
+    #                   dropout_value=DROPOUT).to(device)
+
+
+    # below is for attention
+
     encoder = Encoder(input_dim=INPUT_DIMENSION,
-                      embedding_size=EMBEDDING_SIZE,
+                      embedded_size=EMBEDDING_SIZE,
                       hidden_dim=HIDDEN_LAYER,
                       num_layers=NUM_LAYERS,
                       bidirectional=BIDIRECTIONAL,
                       cell_type=CELL,
-                      dropout_value=DROPOUT).to(device)
+                      dp=DROPOUT).to(device)
     
     decoder = Decoder(output_dim=OUTPUT_DIMENSION,
-                      embedding_size=EMBEDDING_SIZE,
+                      embedded_size=EMBEDDING_SIZE,
                       hidden_dim=HIDDEN_LAYER,
                       num_layers=NUM_LAYERS,
                       bidirectional=BIDIRECTIONAL,
                       cell_type=CELL,
-                      dropout_value=DROPOUT).to(device)
-    
+                      dp=DROPOUT).to(device)
+
+
+
     model = Seq2Seq(encoder,
                     decoder,
                     CELL,
@@ -77,7 +99,8 @@ def main(args):
                         )
     
     # print('tar_id',type(tar_idx_to_char))
-    model_train.train(tar_idx_to_char)
+    # model_train.train(tar_idx_to_char)
+    model_train.train_attention(tar_idx_to_char)
     
 if __name__ =='__main__':
 	args = Config.parseArguments()

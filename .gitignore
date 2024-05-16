@@ -16,4 +16,7 @@ wandb/
 data/
 data.zip
 toy.py
+# Model Dir
+
+Model_Dir/
 
