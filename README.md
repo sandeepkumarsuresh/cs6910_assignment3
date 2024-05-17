@@ -1,11 +1,18 @@
 <h2>CS6910 Assignment 3 - Transliteration </h2>
 
-[Link to the wandb.ai report](paste link here)
-[Link to the github repo](link here)
+
+## Prerequisites
+
+Before running the code you need to install all the requirements
+
+```
+pip3 install -r requirements.txt
+```
+The below code is set to default Vannila RNN Configurations
 
 **To Run the Code**
 
-* Without Attention
+* Without Attention 
 
 ```
 usage: python3 main_vannilla.py 
@@ -51,3 +58,8 @@ usage: python attention_main.py
 * train.py -- for training the Model
 * Transliteration_Dataloader.py -- for setting up the Transliteration Dataloader
 * Utility.py -- Contains all the helper functions
+
+## Author
+
+* **Sandeep Kumar Suresh** - *Github Link* - [Github](https://github.com/sandeepkumarsuresh/cs6910_assignment3)
+                            *Wandb Link* - [Wandb](https://api.wandb.ai/links/ee23s059/zg89vvb7)
