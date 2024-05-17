@@ -1,3 +1,9 @@
+"""
+Parse command-line arguments using argparse.
+
+"""
+
+
 import argparse
 
 
@@ -11,7 +17,7 @@ def parseArguments():
     parser.add_argument( '--embedding_size', help='embedding SIZE', type=int, default=512)
     parser.add_argument( '--hidden_size', help='hidden layer size',type=int, default=512)
     parser.add_argument( '--dropout', help='choices:[0,0.2,0.3]',type=float, default=0) # default 0.1 . Put 0 for attn
-    parser.add_argument( '--num_layers', help='Number of Layers',type=int, default=1)
+    parser.add_argument( '--num_layers', help='Number of Layers',type=int, default=3)
     parser.add_argument( '--bidirectional', help='Choices:["True","False"]',type=bool, default="True")
     parser.add_argument( '--teacher_forcing', help='choices:[0,0.2,0.3,0.5,0.7]',type=float, default=0.7)
 

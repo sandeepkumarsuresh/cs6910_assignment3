@@ -1,12 +1,9 @@
 import torch.nn.functional as F 
 import torch.nn as nn
-# import torch.nn as nn
 import torch
 from dataclasses import dataclass
 from torch.nn import Module
-# from torch.nn import Embedding
 import random
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # """
 # reference:
@@ -19,6 +16,27 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 @dataclass(unsafe_hash=True)
 class Encoder(nn.Module):
+    """
+    A class representing an Encoder module for a sequence-to-sequence model.
+
+    Attributes:
+        input_dim (int): The dimensionality of the input data.
+        embedded_size (int): The size of the embedded representation.
+        hidden_dim (int): The size of the hidden state of the RNN.
+        num_layers (int): The number of layers in the RNN.
+        bidirectional (bool): Whether the RNN is bidirectional or not.
+        cell_type (str): The type of RNN cell, e.g., 'LSTM', 'GRU'.
+        dp (float): Dropout probability.
+
+    Example:
+        To create an Encoder object:
+        
+        encoder = Encoder(input_dim=100, embedded_size=50, hidden_dim=128,
+                          num_layers=2, bidirectional=True, cell_type='LSTM', dp=0.2)
+    
+    
+    
+    """
     input_dim: int
     embedded_size: int
     hidden_dim: int
@@ -69,6 +87,26 @@ class Encoder(nn.Module):
 
 @dataclass(unsafe_hash=True)
 class Decoder(nn.Module):
+    """
+    A class representing a Decoder module for a sequence-to-sequence model.
+
+    Attributes:
+        output_dim (int): The dimensionality of the output data.
+        embedded_size (int): The size of the embedded representation.
+        hidden_dim (int): The size of the hidden state of the RNN.
+        num_layers (int): The number of layers in the RNN.
+        bidirectional (bool): Whether the RNN is bidirectional or not.
+        cell_type (str): The type of RNN cell, e.g., 'LSTM', 'GRU'.
+        dp (float): Dropout probability.
+
+    Example:
+        To create a Decoder object:
+        
+        decoder = Decoder(output_dim=100, embedded_size=50, hidden_dim=128,
+                          num_layers=2, bidirectional=True, cell_type='LSTM', dp=0.2)
+        
+    
+    """
     output_dim: int
     embedded_size: int
     hidden_dim: int
@@ -123,6 +161,31 @@ class Decoder(nn.Module):
 
 
 class Seq2Seq(nn.Module):
+    """
+    A class representing a Sequence-to-Sequence model.
+
+    This model typically consists of an encoder and a decoder.
+
+    Attributes:
+        encoder: The encoder module.
+        decoder: The decoder module.
+        cell_type (str): The type of RNN cell used in both encoder and decoder.
+        bidirectional (bool): Whether the RNNs in both encoder and decoder are bidirectional.
+
+    Example:
+        To create a Seq2Seq object:
+    
+        encoder = Encoder(input_dim=100, embedded_size=50, hidden_dim=128,
+                          num_layers=2, bidirectional=True, cell_type='LSTM', dp=0.2)
+
+        decoder = Decoder(output_dim=100, embedded_size=50, hidden_dim=128,
+                          num_layers=2, bidirectional=True, cell_type='LSTM', dp=0.2)
+                          
+        seq2seq_model = Seq2Seq(encoder=encoder, decoder=decoder, cell_type='LSTM', bidirectional=True)
+
+    
+    """
+
     def __init__(self, encoder, decoder,cell_type,bidirectional):
         super(Seq2Seq, self).__init__()
         self.encoder = encoder

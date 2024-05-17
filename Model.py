@@ -19,6 +19,27 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 @dataclass(unsafe_hash=True)
 class Encoder(Module):
+    """
+    A class representing an Encoder module for a sequence-to-sequence model.
+
+    Attributes:
+        input_dim (int): The dimensionality of the input data.
+        embedded_size (int): The size of the embedded representation.
+        hidden_dim (int): The size of the hidden state of the RNN.
+        num_layers (int): The number of layers in the RNN.
+        bidirectional (bool): Whether the RNN is bidirectional or not.
+        cell_type (str): The type of RNN cell, e.g., 'LSTM', 'GRU'.
+        dp (float): Dropout probability.
+
+    Example:
+        To create an Encoder object:
+        
+        encoder = Encoder(input_dim=100, embedded_size=50, hidden_dim=128,
+                          num_layers=2, bidirectional=True, cell_type='LSTM', dp=0.2)
+    
+    
+    
+    """
     input_dim:int
     embedding_size:int
     hidden_dim:int
@@ -33,7 +54,7 @@ class Encoder(Module):
         self.embedding = nn.Embedding(self.input_dim,self.embedding_size)
         # print('---Inside Encoder---')
         # print(type(self.cell_type))
-        self.bidirectional = self.bidirectional.lower() == 'true'
+        # self.bidirectional = self.bidirectional.lower() == 'true'
 
         if self.bidirectional:
             self.dir=2
@@ -66,6 +87,26 @@ class Encoder(Module):
         
 @dataclass(unsafe_hash=True)
 class Decoder(Module):
+    """
+    A class representing a Decoder module for a sequence-to-sequence model.
+
+    Attributes:
+        output_dim (int): The dimensionality of the output data.
+        embedded_size (int): The size of the embedded representation.
+        hidden_dim (int): The size of the hidden state of the RNN.
+        num_layers (int): The number of layers in the RNN.
+        bidirectional (bool): Whether the RNN is bidirectional or not.
+        cell_type (str): The type of RNN cell, e.g., 'LSTM', 'GRU'.
+        dp (float): Dropout probability.
+
+    Example:
+        To create a Decoder object:
+        
+        decoder = Decoder(output_dim=100, embedded_size=50, hidden_dim=128,
+                          num_layers=2, bidirectional=True, cell_type='LSTM', dp=0.2)
+        
+    
+    """
 
     output_dim:int
     embedding_size:int
@@ -78,7 +119,7 @@ class Decoder(Module):
     def __post_init__(self):
         super(Decoder, self).__init__()
 
-        self.bidirectional = self.bidirectional.lower() 
+        # self.bidirectional = self.bidirectional.lower() 
 
         if self.bidirectional:
             self.dir=2
@@ -116,6 +157,31 @@ class Decoder(Module):
 
 # @dataclass(unsafe_hash=True)
 class Seq2Seq(Module):
+
+    """
+    A class representing a Sequence-to-Sequence model.
+
+    This model typically consists of an encoder and a decoder.
+
+    Attributes:
+        encoder: The encoder module.
+        decoder: The decoder module.
+        cell_type (str): The type of RNN cell used in both encoder and decoder.
+        bidirectional (bool): Whether the RNNs in both encoder and decoder are bidirectional.
+
+    Example:
+        To create a Seq2Seq object:
+    
+        encoder = Encoder(input_dim=100, embedded_size=50, hidden_dim=128,
+                          num_layers=2, bidirectional=True, cell_type='LSTM', dp=0.2)
+
+        decoder = Decoder(output_dim=100, embedded_size=50, hidden_dim=128,
+                          num_layers=2, bidirectional=True, cell_type='LSTM', dp=0.2)
+                          
+        seq2seq_model = Seq2Seq(encoder=encoder, decoder=decoder, cell_type='LSTM', bidirectional=True)
+
+    
+    """
     def __init__(self, encoder, decoder,cell_type,bidirectional):
         super(Seq2Seq, self).__init__()
         self.encoder = encoder
@@ -143,7 +209,7 @@ class Seq2Seq(Module):
         #print("encoder hidden shape",encoder_hidden.shape)
         # Concatenate the last hidden state of the encoder from both directions
         # print(self.bidirectional)
-        if self.bidirectional=='true':
+        if self.bidirectional:
             if self.cell_type=='LSTM':
                 hidden_concat = torch.add(encoder_hidden[0][0:self.encoder.num_layers,:,:], encoder_hidden[1][0:self.encoder.num_layers,:,:])/2
                 cell_concat = torch.add(encoder_hidden[0][self.encoder.num_layers:,:,:], encoder_hidden[1][self.encoder.num_layers:,:,:])/2

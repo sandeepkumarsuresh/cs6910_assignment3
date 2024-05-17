@@ -12,21 +12,26 @@ from typing import Any
 
 from torch.utils.data import Dataset, DataLoader
 
-# url_base = 'https://raw.githubusercontent.com/multi30k/dataset/master/data/task1/raw/'
-# train_urls = ('train.de.gz', 'train.en.gz')
-# val_urls = ('val.de.gz', 'val.en.gz')
-# test_urls = ('test_2016_flickr.de.gz', 'test_2016_flickr.en.gz')
-
-# train_filepaths = [extract_archive(download_from_url(url_base + url))[0] for url in train_urls]
-# val_filepaths = [extract_archive(download_from_url(url_base + url))[0] for url in val_urls]
-# test_filepaths = [extract_archive(download_from_url(url_base + url))[0] for url in test_urls]
-
-# de_tokenizer = get_tokenizer('spacy', language='de')
-# en_tokenizer = get_tokenizer('spacy', language='en')
-
-
 @dataclass
 class Transliteration_Dataloader(Dataset):
+    """
+    A class representing a DataLoader for transliteration tasks.
+
+    Attributes:
+        file_path (str): The path to the file containing transliteration data.
+        source_lang (str): The source language of the transliteration data.
+        target_lang (str): The target language of the transliteration data.
+        source_vocab (Any): Vocabulary or mapping for the source language.
+        target_vocab (Any): Vocabulary or mapping for the target language.
+        target_char_mapping (Any): Character mapping specific to the target language.
+
+    Example:
+        To create a Transliteration_Dataloader object:
+
+        dataloader = Transliteration_Dataloader(file_path='data.txt', source_lang='en', target_lang='fr',
+                                                source_vocab=source_vocab, target_vocab=target_vocab,
+                                                target_char_mapping=target_char_mapping)
+    """
     file_path:str
     source_lang:str
     target_lang:str
@@ -43,6 +48,9 @@ class Transliteration_Dataloader(Dataset):
         self.max_target_length = max([len(word) for word in self.data_read[self.target_lang].tolist()]) + 1
 
     def do_one_hot(self, word, char_to_idx):
+        """
+        Converts the Character into one-hot encodings
+        """
         num_char = len(char_to_idx)
         max_len = self.max_target_length
         one_hot = torch.zeros((max_len, num_char))
@@ -65,8 +73,8 @@ class Transliteration_Dataloader(Dataset):
         
         source_vocab_ind = [self.source_vocab.get(char, self.source_vocab.get('<unk>')) for char in source_data]
         target_vocab_ind = [self.target_vocab.get(char, self.target_vocab.get('<unk>')) for char in target_data]
-        source_vocab_ind.insert(0, 0)  # Assuming start-of-word token index is 0
-        target_vocab_ind.insert(0, 0)  # Assuming start-of-word token index is 0
+        source_vocab_ind.insert(0, 0)  
+        target_vocab_ind.insert(0, 0)  
 
         source_vocab_len = len(source_vocab_ind)
         target_vocab_len = len(target_vocab_ind)

@@ -9,6 +9,8 @@ def indices_to_string(trg, t_idx_to_char):
     Args:
     trg(Tensor):encoder words of size batch_size x sequence length
     t_idx_to_char(Dict.): index to char mapping
+
+    Returns: Strings
     
     """
     strings = []
@@ -16,30 +18,21 @@ def indices_to_string(trg, t_idx_to_char):
     sq=trg.shape[1]
     for i in range(bs):
       chars = []
-      #print(i)
-      # Convert the sequence of indices to a sequence of characters using the index-to-char mapping
       for j in range(sq):
-        #print(j)
-        #print(trg[i,j].item())            
         if trg[i,j].item() in t_idx_to_char:
-          #print(trg[i,j])
           char = t_idx_to_char[trg[i,j].item()]
           chars.append(char)
-            #print(chars)
-      # Join the characters into a string
       string = ''.join(chars)
-      #print(string)
-        # Append the string to the list of strings
       strings.append(string)
     return strings
 
 def calculate_word_level_accuracy(model,t_idx_to_char,data_loader, criterion):
-    model.eval()
+    model.eval() # Putting the model in evaluation mode. i.e. turning off certain functions
     num_correct = 0
     num_total = 0
     epoch_loss = 0
 
-    with torch.no_grad():
+    with torch.no_grad(): # Turning off gradient
         for batch_idx, (src, trg, src_len, trg_len) in enumerate(data_loader):
             # Convert target indices to string for comparison
             string_trg=indices_to_string(trg,t_idx_to_char)

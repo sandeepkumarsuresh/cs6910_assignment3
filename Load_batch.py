@@ -4,15 +4,27 @@ from Transliteration_Dataloader import *
 
 @dataclass
 class Data_Load_Batch:
+    """
+    A Class to load data in Batches.
 
-    train_path : str = "/home/sandeep/Documents/IITM/Deep Learning/CS6910_Assignment3_Anuska/Dataset/mal/mal_train.csv"
-    val_path : str = "/home/sandeep/Documents/IITM/Deep Learning/CS6910_Assignment3_Anuska/Dataset/mal/mal_valid.csv"
-    test_path : str = "/home/sandeep/Documents/IITM/Deep Learning/CS6910_Assignment3_Anuska/Dataset/mal/mal_test.csv"
+    Attributes:
+        train_path (str): The path to the training dataset CSV file.
+        val_path (str): The path to the validation dataset CSV file.
+        test_path (str): The path to the test dataset CSV file.
+        batch_size (int): The batch size for loading data, default is 32.
+
+    """
+
+    train_path : str = "Dataset/mal/mal_train.csv"
+    val_path : str = "Dataset/mal/mal_valid.csv"
+    test_path : str = "Dataset/mal/mal_test.csv"
 
     batch_size : int = 32 # Setting Default to 32
 
     def dataloader_and_char_mapping(self):
-
+        """
+        Loads data in Batches and does character MApping as well as DataLoader
+        """
         data_preprocess = Build_Vocabulary(self.train_path,'src','tar')
 
         # fetching Vocab
